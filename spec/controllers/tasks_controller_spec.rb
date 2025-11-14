@@ -23,9 +23,9 @@ RSpec.describe 'Tasks API', type: :request do
   it 'shows a task with its children' do
     parent = Task.create!(title: 'Parede', due_date: Date.today)
     child = Task.create!(title: 'Reboco', due_date: Date.today, parent: parent)
-    
+
     get "/tasks/#{parent.id}"
-    
+
     expect(response).to have_http_status(:ok)
     json = JSON.parse(response.body)
     expect(json['title']).to eq('Parede')
@@ -35,7 +35,7 @@ RSpec.describe 'Tasks API', type: :request do
 
   it 'returns 404 when task not found' do
     get "/tasks/99999"
-    
+
     expect(response).to have_http_status(:not_found)
     expect(JSON.parse(response.body)['error']).to eq('Task not found')
   end
