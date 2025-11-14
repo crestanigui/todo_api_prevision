@@ -4,4 +4,14 @@ class Task < ApplicationRecord
 
   validates :title, presence: true
   validates :due_date, presence: true
+
+  validate :child_due_date_after_or_equal_parent
+
+  def child_due_date_after_or_equal_parent
+    return unless parent && due_date
+
+    if due_date < parent.due_date
+      errors.add(:due_date, 'must be on or after parent due_date')
+    end
+  end
 end
