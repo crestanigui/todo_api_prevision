@@ -24,7 +24,7 @@ class Task < ApplicationRecord
       return
     end
 
-    incoming = Set.new([id])
+    incoming = Set.new([ id ])
     current = parent
 
     while current
