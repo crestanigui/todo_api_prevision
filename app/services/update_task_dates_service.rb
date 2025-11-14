@@ -3,7 +3,7 @@ class UpdateTaskDatesService
     @task = task
     @old_date = old_date
     @new_date = new_date
-    @delta = @new_date - @old_date
+    @difference = @new_date - @old_date
   end
 
   def call
@@ -15,7 +15,7 @@ class UpdateTaskDatesService
   def propagate(task)
     task.children.find_each do |child|
       next unless child.due_date
-      child.update!(due_date: child.due_date + @delta)
+      child.update!(due_date: child.due_date + @difference)
       propagate(child)
     end
   end

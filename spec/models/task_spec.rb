@@ -26,4 +26,19 @@ RSpec.describe Task, type: :model do
     expect { parent.destroy }.not_to change { Task.exists?(parent.id) }
     expect(parent.destroy).to be_falsey
   end
+
+  it 'prevents task from being its own parent' do
+    task = Task.create!(title: 'Parede', due_date: Date.today)
+    task.parent_id = task.id
+    expect(task).not_to be_valid
+    expect(task.errors[:parent]).to include('cannot be itself')
+  end
+
+  it 'prevents circular dependency' do
+    a = Task.create!(title: 'Parede', due_date: Date.today)
+    b = Task.create!(title: 'Reboco', due_date: Date.today + 1, parent: a)
+    a.parent = b
+    expect(a).not_to be_valid
+    expect(a.errors[:parent]).to include('creates a circular dependency')
+  end
 end
