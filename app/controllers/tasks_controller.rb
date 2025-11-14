@@ -32,6 +32,15 @@ class TasksController < ApplicationController
     render json: tasks.as_json(include: { children: { only: [ :id, :title, :due_date, :parent_id ] } })
   end
 
+  def show
+    task = Task.find_by(id: params[:id])
+    if task
+      render json: task.as_json(include: { children: { only: [:id, :title, :due_date, :parent_id] } })
+    else
+      render json: { error: "Task not found" }, status: :not_found
+    end
+  end
+
   def destroy
     task = Task.find(params[:id])
 
