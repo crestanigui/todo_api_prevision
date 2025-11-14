@@ -32,6 +32,18 @@ class TasksController < ApplicationController
     render json: tasks.as_json(include: { children: { only: [:id, :title, :due_date, :parent_id] } })
   end
 
+  def destroy
+    task = Task.find(params[:id])
+    
+    if task.children.any?
+      render json: { errors: ['Cannot delete task with children'] }, status: :unprocessable_entity
+    elsif task.destroy
+      render json: { message: 'Task deleted successfully' }, status: :ok
+    else
+      render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def task_params

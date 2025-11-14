@@ -19,4 +19,12 @@ RSpec.describe 'Tasks API', type: :request do
 
     expect(response).to have_http_status(:ok)
   end
+
+  it 'prevents delete when task has children' do
+    parent = Task.create!(title: 'Parede', due_date: Date.today)
+    child = Task.create!(title: 'Reboco', due_date: Date.today, parent: parent)
+    delete "/tasks/#{parent.id}"
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(JSON.parse(response.body)['errors']).to include('Cannot delete task with children')
+  end
 end
